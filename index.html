@@ -1,0 +1,81 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>nem2-tiny-wallet</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="skeleton.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    
+    <div class="container" style="margin-top:1rem;">
+        <h4>nem2-tiny-wallet</h4>
+        <p>too simple to use</p>
+        <form id="account">
+            <label for="privKey">Private Key</label>
+            <input id="privKey" name="privKey" class="u-full-width" type="text" required pattern="^[0-9A-Fa-f]+$" placeholder="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E" value="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E">
+            <label for="endpoint">Endpoint</label>
+            <input id="endpoint" name="endpoint" class="u-full-width" type="text" required pattern="^http.+$" placeholder="http://localhost:3000" value="http://localhost:3000">
+        </form>
+        <form id="info">
+            <fieldset>
+                <legend>Info</legend>
+                <input class="button-primary" type="submit" value="Get">
+                <label for="pubKey">Public Key</label>
+                <input id="pubKey" name="pubKey" class="u-full-width" type="text" disabled>
+                <label for="addr">Address</label>
+                <input id="addr" name="addr" class="u-full-width" type="text" disabled>
+                <label for="balanceOutput">Balance</label>
+                <textarea id="balanceOutput" class="u-full-width" disabled></textarea>
+            </fieldset>
+        </form>
+        <form id="transaction">
+            <fieldset>
+                <legend>Transfer Transaction</legend>
+                <label for="recipient">Recipient Address</label>
+                <input id="recipient" name="recipient" class="u-full-width" type="text" required pattern="^[2-7A-Za-z-]+$" placeholder="SCA7ZS-2B7DEE-BGU3TH-SILYHC-RUR32Y-YE55ZB-LYA2" value="SCA7ZS-2B7DEE-BGU3TH-SILYHC-RUR32Y-YE55ZB-LYA2">
+        
+                <div class="row">
+                    <div class="six columns">
+                        <label for="mosaicId">Mosaic Id (8byte Hex String)</label>
+                        <input id="mosaicId" name="mosaicId" class="u-full-width" type="text" maxlength="16" minlength="16" pattern="^[0-9A-Fa-f]+$" required autocomplete="on" list="mosaicList" placeholder="D525AD41D95FCF29" value="D525AD41D95FCF29">
+                        <datalist id="mosaicList">
+                            <option value="D525AD41D95FCF29">
+                            <option value="85BBEA6CC462B244">
+                        </datalist>
+                    </div>
+                    <div class="six columns">
+                        <label for="amount">Amount (8byte Hex String)</label>
+                        <input id="amount" name="amount" class="u-full-width" type="text" maxlength="16" minlength="16" pattern="^[0-9A-Fa-f]+$" required autocomplete="on" list="amountList" placeholder="00000000000F4240" value="00000000000F4240">
+                        <datalist id="amountList">
+                            <option value="0000000000000001">
+                            <option value="000000000000000A">
+                            <option value="0000000000000064">
+                            <option value="00000000000003E8">
+                            <option value="0000000000002710">
+                            <option value="00000000000186A0">
+                            <option value="00000000000F4240">
+                            <option value="0000000000989680">
+                            <option value="0000000005F5E100">
+                            <option value="000000003B9ACA00">
+                        </datalist>
+                    </div>
+                </div>
+                <input class="button-primary" type="submit" value="Send">
+                <textarea id="txOutput" class="u-full-width"></textarea>
+                <ul id="txHistory"></ul>
+            </fieldset>
+        </form>
+    </div>
+
+    <script src="index.js"></script>
+
+</body>
+</html>

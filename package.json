@@ -1,0 +1,24 @@
+{
+  "name": "nem2-tiny-wallet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp build",
+    "serve": "gulp serve",
+    "eslint": "eslint row.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nem2-library": "^0.9.5",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "eslint": "^5.14.0",
+    "gulp": "^4.0.0",
+    "superstatic": "^6.0.4"
+  }
+}
