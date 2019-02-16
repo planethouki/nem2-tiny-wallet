@@ -1,6 +1,8 @@
 # nem2-tiny-wallet
 
-Alpaca, Bison, Cow compatible
+Alpaca, Bison, Cow compatible.
+
+It is because this wallet supports only transfer transaction.
 
 ## hosting
 
