@@ -5,7 +5,7 @@ const fs = require('fs');
 
 gulp.task("build", function(done) {
     var b = browserify();
-    b.add('./row.js');
+    b.add('./raw.js');
     b.bundle((error, compiled) => {
         console.log(error)
         fs.writeFile("./index.js", compiled, done);
