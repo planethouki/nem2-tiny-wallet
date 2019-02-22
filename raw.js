@@ -29,14 +29,15 @@ function getInfo(privateKey, endpoint, callback) {
     })
 }
 
-function transferTransaction(privateKey, endpoint, recipientPlainAddress, mosaicId, amount, callback) {
+function transferTransaction(privateKey, endpoint, recipientPlainAddress, fee, mosaicId, amount, callback) {
     const keypair = nem2lib.KeyPair.createKeyPairFromPrivateKeyString(privateKey)
     const recipient = nem2lib.convert.uint8ToHex(nem2lib.address.stringToAddress(recipientPlainAddress))
     const txPayload = 
         "A5000000" +
         "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
         nem2lib.convert.uint8ToHex(keypair.publicKey) +
-        "039054410000000000000000" +
+        "03905441" + 
+        endian(fee) +
         nem2lib.convert.uint8ToHex(new Uint8Array(new Uint32Array(nem2lib.deadline(2 * 60 * 60 * 1000)).buffer)) +
         recipient +
         "01000100" +
@@ -89,7 +90,8 @@ txForm.addEventListener('submit', (e) => {
         const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
         const mosaicId = txForm["mosaicId"].value.toUpperCase()
         const amount = txForm["amount"].value.toUpperCase()
-        transferTransaction(privateKey, endpoint, recipient, mosaicId, amount, function(status, hash) {
+        const fee = txForm["fee"].value.toUpperCase()
+        transferTransaction(privateKey, endpoint, recipient, fee, mosaicId, amount, function(status, hash) {
             const a = document.createElement('a')
             a.setAttribute('href', endpoint + "/transaction/" + hash + "/status")
             a.setAttribute('target', '_blank')
