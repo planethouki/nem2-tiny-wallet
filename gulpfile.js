@@ -14,8 +14,13 @@ function javascript(cb) {
 }
 
 function html(cb) {
-    ejs.renderFile("./index.ejs", {}, {}, function(err, str){
+    ejs.renderFile("./index.ejs", {env: "hosting"}, {}, function(err, str){
         fs.writeFile("./index.html", str, cb);
+    });
+}
+function dockerHtml(cb) {
+    ejs.renderFile("./index.ejs", {env: "docker"}, {}, function(err, str){
+        fs.writeFile("./docker.html", str, cb);
     });
 }
 
@@ -42,6 +47,6 @@ function docsCss() {
 }
 
 
-exports.build = parallel(javascript, html);
+exports.build = parallel(javascript, html, dockerHtml);
 exports.serve = serve;
 exports.docs = parallel(docsJs, docsHtml, docsCss);

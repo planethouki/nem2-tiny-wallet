@@ -20,8 +20,13 @@
         <form id="account">
             <label for="privKey">Private Key</label>
             <input id="privKey" name="privKey" class="u-full-width" type="text" required pattern="^[0-9A-Fa-f]+$" placeholder="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E" value="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E">
-            <label for="endpoint">Endpoint</label>
-            <input id="endpoint" name="endpoint" class="u-full-width" type="text" required pattern="^http.+$" placeholder="http://localhost:3000" value="http://localhost:3000">
+            <% if (env === "hosting") { %>
+                <label for="endpoint">Endpoint</label>
+                <input id="endpoint" name="endpoint" class="u-full-width" type="text" required pattern="^http.+$" placeholder="http://localhost:3000" value="http://localhost:3000">
+            <% } else if (env === "docker") { %>
+                <input id="endpoint" name="endpoint" type="hidden" value="">
+                <script>document.getElementById("endpoint").value=location.protocol+"//"+location.hostname+":3000"</script>
+            <% } %>
         </form>    
     </div>
     <h5 id="loading" class="container">Loading...</h5>
