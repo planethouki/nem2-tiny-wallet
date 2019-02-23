@@ -21,6 +21,19 @@ function serve() {
     }).listen();
 }
 
+function docsJs() {
+    return src('index.js')
+        .pipe(dest('docs/'));
+}
+function docsHtml() {
+    return src('index.html')
+        .pipe(dest('docs/'));
+}
+function docsCss() {
+    return src('*.css')
+        .pipe(dest('docs/'));
+}
 
 exports.build = series(javascript);
 exports.serve = serve;
+exports.docs = parallel(docsJs, docsHtml, docsCss);
