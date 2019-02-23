@@ -1,22 +1,26 @@
-const gulp = require("gulp");
+const { series, parallel, src, dest } = require('gulp');
 const superstatic = require('superstatic');
-var browserify = require('browserify');
+const browserify = require('browserify');
 const fs = require('fs');
 
-gulp.task("build", function(done) {
+function javascript(cb) {
     var b = browserify();
     b.add('./raw.js');
     b.bundle((error, compiled) => {
-        console.log(error)
-        fs.writeFile("./index.js", compiled, done);
+        if (error) console.log(error)
+        fs.writeFile("./index.js", compiled, cb);
     });
-});
+}
 
-gulp.task('serve', function(){
+function serve() {
     superstatic.server({
         port:3000,
         config: {
             public: "."
         },
     }).listen();
-});
+}
+
+
+exports.build = series(javascript);
+exports.serve = serve;
