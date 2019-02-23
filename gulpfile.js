@@ -2,6 +2,7 @@ const { series, parallel, src, dest } = require('gulp');
 const superstatic = require('superstatic');
 const browserify = require('browserify');
 const fs = require('fs');
+const ejs = require('ejs');
 
 function javascript(cb) {
     var b = browserify();
@@ -9,6 +10,12 @@ function javascript(cb) {
     b.bundle((error, compiled) => {
         if (error) console.log(error)
         fs.writeFile("./index.js", compiled, cb);
+    });
+}
+
+function html(cb) {
+    ejs.renderFile("./index.ejs", {}, {}, function(err, str){
+        fs.writeFile("./index.html", str, cb);
     });
 }
 
@@ -34,6 +41,7 @@ function docsCss() {
         .pipe(dest('docs/'));
 }
 
-exports.build = series(javascript);
+
+exports.build = parallel(javascript, html);
 exports.serve = serve;
 exports.docs = parallel(docsJs, docsHtml, docsCss);
