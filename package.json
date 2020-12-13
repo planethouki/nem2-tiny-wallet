@@ -7,20 +7,30 @@
     "build": "gulp build",
     "serve": "gulp serve",
     "docs": "gulp docs",
-    "eslint": "eslint row.js"
+    "eslint": "eslint src/index.js",
+    "test": "jest && mocha test/mocha"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "planethouki",
+  "license": "MIT",
   "dependencies": {
-    "nem2-library": "^0.9.5",
-    "request": "^2.88.0"
+    "js-sha3": "^0.8.0",
+    "symbol-sdk": "^0.22.2",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
-    "browserify": "^16.2.3",
-    "ejs": "^2.6.1",
-    "eslint": "^5.14.0",
-    "gulp": "^4.0.0",
-    "superstatic": "^6.0.4"
+    "browserify": "^17.0.0",
+    "chai": "^4.2.0",
+    "ejs": "^3.1.5",
+    "eslint": "^7.15.0",
+    "gulp": "^4.0.2",
+    "jest": "^26.6.3",
+    "mocha": "^8.2.1",
+    "superstatic": "^7.1.0"
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/jest/**/*.test.js"
+    ]
   }
 }

@@ -1,52 +1,59 @@
-const { series, parallel, src, dest } = require('gulp');
+const { parallel, src, dest } = require('gulp');
 const superstatic = require('superstatic');
 const browserify = require('browserify');
 const fs = require('fs');
 const ejs = require('ejs');
 
 function javascript(cb) {
-    var b = browserify();
-    b.add('./raw.js');
+    const b = browserify({
+        ignoreMissing : true
+    });
+    b.add('./src/index.js');
     b.bundle((error, compiled) => {
         if (error) console.log(error)
-        fs.writeFile("./index.js", compiled, cb);
+        fs.writeFile("./dist/index.js", compiled, cb);
     });
 }
 
 function html(cb) {
-    ejs.renderFile("./index.ejs", {env: "hosting"}, {}, function(err, str){
-        fs.writeFile("./index.html", str, cb);
+    ejs.renderFile("./src/index.ejs", {env: "hosting"}, {}, function(err, str){
+        fs.writeFile("./dist/index.html", str, cb);
     });
 }
 function dockerHtml(cb) {
-    ejs.renderFile("./index.ejs", {env: "docker"}, {}, function(err, str){
-        fs.writeFile("./docker.html", str, cb);
+    ejs.renderFile("./src/index.ejs", {env: "docker"}, {}, function(err, str){
+        fs.writeFile("./dist/docker.html", str, cb);
     });
+}
+
+function css() {
+    return src('./src/*.css')
+        .pipe(dest('dist/'));
 }
 
 function serve() {
     superstatic.server({
         port:3000,
         config: {
-            public: "."
+            public: "./dist/"
         },
     }).listen();
 }
 
 function docsJs() {
-    return src('index.js')
+    return src('./dist/index.js')
         .pipe(dest('docs/'));
 }
 function docsHtml() {
-    return src('index.html')
+    return src('./dist/index.html')
         .pipe(dest('docs/'));
 }
 function docsCss() {
-    return src('*.css')
+    return src('./dist/*.css')
         .pipe(dest('docs/'));
 }
 
 
-exports.build = parallel(javascript, html, dockerHtml);
+exports.build = parallel(javascript, html, dockerHtml, css);
 exports.serve = serve;
 exports.docs = parallel(docsJs, docsHtml, docsCss);

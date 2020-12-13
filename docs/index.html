@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff">
-    
+
     <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="skeleton.css">
     <link rel="stylesheet" href="index.css">
@@ -19,10 +19,30 @@
         <p>too simple to use</p>
         <form id="account">
             <label for="privKey">Private Key</label>
-            <input id="privKey" name="privKey" class="u-full-width" type="text" required pattern="^[0-9A-Fa-f]+$" placeholder="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E" value="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E">
-            <label for="endpoint">Endpoint</label>
-            <input id="endpoint" name="endpoint" class="u-full-width" type="text" required pattern="^http.+$" placeholder="http://localhost:3000" value="http://localhost:3000">
-        </form>    
+            <input
+                    id="privKey"
+                    name="privKey"
+                    class="u-full-width"
+                    type="text"
+                    required
+                    pattern="^[0-9A-Fa-f]+$"
+                    placeholder="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E"
+                    value="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E"
+            />
+            
+                <label for="endpoint">Endpoint</label>
+                <input
+                        id="endpoint"
+                        name="endpoint"
+                        class="u-full-width"
+                        type="text"
+                        required
+                        pattern="^http.+$"
+                        placeholder="http://localhost:3000"
+                        value="https://d2o8j5pgb7wqnq.cloudfront.net:443"
+                />
+            
+        </form>
     </div>
     <h5 id="loading" class="container">Loading...</h5>
     <div id="loaded" class="container" style="display: none;">
@@ -42,26 +62,73 @@
             <fieldset>
                 <legend>Transfer Transaction</legend>
                 <label for="recipient">Recipient Address</label>
-                <input id="recipient" name="recipient" class="u-full-width" type="text" required pattern="^[2-7A-Za-z-]+$" placeholder="SCA7ZS-2B7DEE-BGU3TH-SILYHC-RUR32Y-YE55ZB-LYA2" value="SCA7ZS-2B7DEE-BGU3TH-SILYHC-RUR32Y-YE55ZB-LYA2">
-        
+                <input
+                        id="recipient"
+                        name="recipient"
+                        class="u-full-width"
+                        type="text"
+                        required
+                        pattern="^[2-7A-Za-z-]+$"
+                        placeholder="TAR5SCEKZKUYGODYEXRAOZMBAI4LUAJ3ZHX6OTY"
+                        value="TAR5SCEKZKUYGODYEXRAOZMBAI4LUAJ3ZHX6OTY"
+                />
                 <div class="row">
                     <div class="six columns">
                         <label for="mosaicId">Mosaic Id (8byte Hex String)</label>
-                        <input id="mosaicId" name="mosaicId" class="u-full-width" type="text" maxlength="16" minlength="16" pattern="^[0-9A-Fa-f]+$" required autocomplete="on" list="mosaicList" placeholder="D525AD41D95FCF29" value="D525AD41D95FCF29">
+                        <input
+                                id="mosaicId"
+                                name="mosaicId"
+                                class="u-full-width"
+                                type="text"
+                                maxlength="16"
+                                minlength="16"
+                                pattern="^[0-9A-Fa-f]+$"
+                                required
+                                autocomplete="on"
+                                list="mosaicList"
+                                placeholder="5B66E76BECAD0860"
+                                value="5B66E76BECAD0860"
+                        />
                         <datalist id="mosaicList">
-                            <option value="D525AD41D95FCF29">
-                            <option value="85BBEA6CC462B244">
+                            <option value="5B66E76BECAD0860">
+                            <option value="E74B99BA41F4AFEE">
                         </datalist>
                     </div>
                     <div class="six columns">
                         <label for="amount">Amount (8byte Hex String)</label>
-                        <input id="amount" name="amount" class="u-full-width" type="text" maxlength="16" minlength="16" pattern="^[0-9A-Fa-f]+$" required autocomplete="on" list="amountList" placeholder="00000000000F4240" value="00000000000F4240">
+                        <input
+                                id="amount"
+                                name="amount"
+                                class="u-full-width"
+                                type="text"
+                                maxlength="16"
+                                minlength="16"
+                                pattern="^[0-9A-Fa-f]+$"
+                                required
+                                autocomplete="on"
+                                list="amountList"
+                                placeholder="0000000000004E20"
+                                value="0000000000004E20"
+                        />
                     </div>
                 </div>
                 <div class="row">
                     <div class="six columns">
                         <label for="fee">Fee (8byte Hex String)</label>
-                        <input id="fee" name="fee" class="u-full-width" type="text" maxlength="16" minlength="16" pattern="^[0-9A-Fa-f]+$" required autocomplete="on" list="amountList" placeholder="00000000000F4240" value="00000000000F4240">
+                        <input
+                                id="fee"
+                                name="fee"
+                                class="u-full-width"
+                                type="text"
+                                maxlength="16"
+                                minlength="16"
+                                pattern="^[0-9A-Fa-f]+$"
+                                required
+                                autocomplete="on"
+                                list="amountList"
+                                placeholder="00000000000F4240"
+                                value="00000000000F4240"
+                        />
                     </div>
                 </div>
                 <datalist id="amountList">
