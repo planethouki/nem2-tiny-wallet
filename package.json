@@ -2,7 +2,7 @@
   "name": "nem2-tiny-wallet",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "gulp build",
     "serve": "gulp serve",

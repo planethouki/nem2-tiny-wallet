@@ -20,11 +20,6 @@ function html(cb) {
         fs.writeFile("./dist/index.html", str, cb);
     });
 }
-function dockerHtml(cb) {
-    ejs.renderFile("./src/index.ejs", {env: "docker"}, {}, function(err, str){
-        fs.writeFile("./dist/docker.html", str, cb);
-    });
-}
 
 function css() {
     return src('./src/*.css')
@@ -54,6 +49,6 @@ function docsCss() {
 }
 
 
-exports.build = parallel(javascript, html, dockerHtml, css);
+exports.build = parallel(javascript, html, css);
 exports.serve = serve;
 exports.docs = parallel(docsJs, docsHtml, docsCss);
