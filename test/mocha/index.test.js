@@ -26,9 +26,11 @@ describe('nem2', () => {
 
     it('getBase32DecodeAddress', () => {
         const s = new Nem2(privateKey, networkType);
-        const address = "TC7ULQWT6A3Z6GTCMJUQSCD5G6YZNOVPVZ7UYPA";
+        const addressPlain = "TC7ULQWT6A3Z6GTCMJUQSCD5G6YZNOVPVZ7UYPA";
+        const addressPretty = "TC7ULQ-WT6A3Z-6GTCMJ-UQSCD5-G6YZNO-VPVZ7U-YPA";
         const rawAddress = "98BF45C2D3F0379F1A62626909087D37B196BAAFAE7F4C3C";
-        assert.equal(s.getBase32DecodeAddress(address), rawAddress);
+        assert.equal(s.getBase32DecodeAddress(addressPlain), rawAddress);
+        assert.equal(s.getBase32DecodeAddress(addressPretty), rawAddress);
     });
 
     it('sign', () => {

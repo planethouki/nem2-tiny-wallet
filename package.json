@@ -14,6 +14,7 @@
   "author": "planethouki",
   "license": "MIT",
   "dependencies": {
+    "base32-decode": "^1.0.0",
     "js-sha3": "^0.8.0",
     "symbol-sdk": "^0.22.2",
     "utf8": "^3.0.0"

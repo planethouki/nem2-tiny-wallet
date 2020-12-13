@@ -1,5 +1,6 @@
-const { Account, Address, KeyPair } = require('symbol-sdk');
+const { Account, KeyPair } = require('symbol-sdk');
 const { uint8ArrayToHex, hexToUint8Array } = require('./independence');
+const base32Decode = require('base32-decode');
 
 class Nem2 {
     constructor(privateKey, networkType) {
@@ -14,8 +15,9 @@ class Nem2 {
         return this.account.address.plain()
     }
 
-    getBase32DecodeAddress(plainAddress) {
-        return Address.createFromRawAddress(plainAddress).encoded()
+    getBase32DecodeAddress(plainOrPrettyAddress) {
+        const plainAddress = plainOrPrettyAddress.replace(/-/g, '')
+        return uint8ArrayToHex(base32Decode(plainAddress, 'RFC4648'))
     }
 
     createDeadline(catapultTime) {
