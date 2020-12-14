@@ -1,14 +1,15 @@
 const { endian } = require('./utils/independence')
-const { getTransactionHash } = require('./utils/sha3')
+const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
+const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getInfo(privateKey, endpoint, callback) {
     const network = await fetch(`${endpoint}/node/info`)
         .then(res => res.json())
         .then(nodeInfo => nodeInfo.networkIdentifier)
-    const n = new Nem2(privateKey, network)
+    const n = new Nem2(privateKey)
     const pubkey = n.getPublicKey()
-    const address = n.getPlainAddress()
+    const address = getBase32EncodeAddress(await publicKeyToHexAddress(pubkey))
     const { error, mosaics } = await fetch(`${endpoint}/accounts/${address}`)
         .then(res => res.json())
         .then(res => res.account)
@@ -33,7 +34,7 @@ async function transferTransaction(privateKey, endpoint, recipientPlainAddress, 
                 generationHash: nodeInfo.networkGenerationHashSeed
             }
         })
-    const n = new Nem2(privateKey, network)
+    const n = new Nem2(privateKey)
     const pubkey = n.getPublicKey()
     const serverTime = await fetch(`${endpoint}/node/time`)
         .then(res => res.json())
@@ -43,7 +44,7 @@ async function transferTransaction(privateKey, endpoint, recipientPlainAddress, 
     console.log(serverTime)
     const deadline = n.createDeadline(serverTime + 2 * 3600 * 1000)
     console.log(deadline)
-    const recipient = n.getBase32DecodeAddress(recipientPlainAddress)
+    const recipient = getBase32DecodeAddress(recipientPlainAddress)
     const txPayload =
         "B000000000000000" +
         "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
@@ -61,7 +62,7 @@ async function transferTransaction(privateKey, endpoint, recipientPlainAddress, 
         signature +
         txPayload.substr((8 + 64) * 2)
 
-    const signedTxHash = getTransactionHash(signedTxPayload, generationHash)
+    const signedTxHash = await getTransactionHash(signedTxPayload, generationHash)
     const request = new Request(
         `${endpoint}/transactions`,
         {

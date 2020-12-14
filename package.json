@@ -15,9 +15,9 @@
   "license": "MIT",
   "dependencies": {
     "base32-decode": "^1.0.0",
-    "js-sha3": "^0.8.0",
-    "symbol-sdk": "^0.22.2",
-    "utf8": "^3.0.0"
+    "base32-encode": "^1.1.1",
+    "hash-wasm": "^4.4.1",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "browserify": "^17.0.0",

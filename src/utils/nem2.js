@@ -1,23 +1,15 @@
-const { Account, KeyPair } = require('symbol-sdk');
 const { uint8ArrayToHex, hexToUint8Array } = require('./independence');
-const base32Decode = require('base32-decode');
+const tweetnacl = require('tweetnacl');
 
 class Nem2 {
-    constructor(privateKey, networkType) {
-        this.account = Account.createFromPrivateKey(privateKey, networkType);
+    constructor(hexPrivateKey) {
+        const privateKey = hexToUint8Array(hexPrivateKey);
+        const { publicKey } = tweetnacl.sign.keyPair.fromSeed(privateKey);
+        this.keyPair = { privateKey, publicKey };
     }
 
     getPublicKey() {
-        return this.account.publicKey
-    }
-
-    getPlainAddress() {
-        return this.account.address.plain()
-    }
-
-    getBase32DecodeAddress(plainOrPrettyAddress) {
-        const plainAddress = plainOrPrettyAddress.replace(/-/g, '')
-        return uint8ArrayToHex(base32Decode(plainAddress, 'RFC4648'))
+        return uint8ArrayToHex(this.keyPair.publicKey).toUpperCase();
     }
 
     createDeadline(catapultTime) {
@@ -25,9 +17,13 @@ class Nem2 {
     }
 
     sign(txPayload, generationHash) {
-        const txPayloadSigningBytes = generationHash + txPayload.substr((4 + 64 + 32 + 8) * 2)
-        const keyPair = KeyPair.createKeyPairFromPrivateKeyString(this.account.privateKey)
-        return uint8ArrayToHex(KeyPair.sign(keyPair, hexToUint8Array(txPayloadSigningBytes)))
+        const txPayloadSigningBytes =
+            hexToUint8Array(generationHash + txPayload.substr((4 + 64 + 32 + 8) * 2));
+        const secretKey = new Uint8Array(64);
+        secretKey.set(this.keyPair.privateKey);
+        secretKey.set(this.keyPair.publicKey, 32);
+        const signature = tweetnacl.sign.detached(txPayloadSigningBytes, secretKey);
+        return uint8ArrayToHex(signature);
     }
 }
 
