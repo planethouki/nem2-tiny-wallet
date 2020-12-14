@@ -4,6 +4,7 @@ const Nem2 = require('./utils/nem2')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getInfo(privateKey, endpoint, callback) {
+    // eslint-disable-next-line no-unused-vars
     const network = await fetch(`${endpoint}/node/info`)
         .then(res => res.json())
         .then(nodeInfo => nodeInfo.networkIdentifier)
@@ -26,6 +27,7 @@ async function getInfo(privateKey, endpoint, callback) {
 }
 
 async function transferTransaction(privateKey, endpoint, recipientPlainAddress, fee, mosaicId, amount, callback) {
+    // eslint-disable-next-line no-unused-vars
     const { network, generationHash } = await fetch(`${endpoint}/node/info`)
         .then(res => res.json())
         .then((nodeInfo) => {
