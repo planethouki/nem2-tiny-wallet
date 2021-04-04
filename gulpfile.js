@@ -16,7 +16,7 @@ function javascript(cb) {
 }
 
 function html(cb) {
-    ejs.renderFile("./src/index.ejs", {env: "hosting"}, {}, function(err, str){
+    ejs.renderFile("./src/index.ejs", {}, {}, function(err, str){
         fs.writeFile("./dist/index.html", str, cb);
     });
 }

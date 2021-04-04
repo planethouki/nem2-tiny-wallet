@@ -28,25 +28,17 @@
                     placeholder="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E"
                     value="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E"
             />
-            <% if (env === "hosting") { %>
-                <label for="endpoint">Endpoint</label>
-                <input
-                        id="endpoint"
-                        name="endpoint"
-                        class="u-full-width"
-                        type="text"
-                        required
-                        pattern="^http.+$"
-                        placeholder="http://localhost:3000"
-                        value="https://dg0nbr5d1ohfy.cloudfront.net:443"
-                />
-            <% } else if (env === "docker") { %>
-                <input id="endpoint" name="endpoint" type="hidden" value="">
-                <script>
-                    document.getElementById("endpoint").value =
-                        location.protocol + "//" + location.hostname + ":3000";
-                </script>
-            <% } %>
+            <label for="endpoint">Endpoint</label>
+            <input
+                    id="endpoint"
+                    name="endpoint"
+                    class="u-full-width"
+                    type="text"
+                    required
+                    pattern="^http.+$"
+                    placeholder="http://localhost:3000"
+                    value="https://dg0nbr5d1ohfy.cloudfront.net:443"
+            />
         </form>
     </div>
     <h5 id="loading" class="container">Loading...</h5>
