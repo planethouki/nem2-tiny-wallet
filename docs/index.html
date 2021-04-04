@@ -28,19 +28,17 @@
                     placeholder="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E"
                     value="25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E"
             />
-            
-                <label for="endpoint">Endpoint</label>
-                <input
-                        id="endpoint"
-                        name="endpoint"
-                        class="u-full-width"
-                        type="text"
-                        required
-                        pattern="^http.+$"
-                        placeholder="http://localhost:3000"
-                        value="https://dg0nbr5d1ohfy.cloudfront.net:443"
-                />
-            
+            <label for="endpoint">Endpoint</label>
+            <input
+                    id="endpoint"
+                    name="endpoint"
+                    class="u-full-width"
+                    type="text"
+                    required
+                    pattern="^http.+$"
+                    placeholder="http://localhost:3000"
+                    value="https://dg0nbr5d1ohfy.cloudfront.net:443"
+            />
         </form>
     </div>
     <h5 id="loading" class="container">Loading...</h5>
@@ -85,10 +83,11 @@
                                 required
                                 autocomplete="on"
                                 list="mosaicList"
-                                placeholder="5B66E76BECAD0860"
-                                value="5B66E76BECAD0860"
+                                placeholder="2CF403E85507F39E"
+                                value="2CF403E85507F39E"
                         />
                         <datalist id="mosaicList">
+                            <option value="2CF403E85507F39E">
                             <option value="5B66E76BECAD0860">
                             <option value="E74B99BA41F4AFEE">
                         </datalist>
@@ -142,6 +141,8 @@
                     <option value="0000000005F5E100">
                     <option value="000000003B9ACA00">
                 </datalist>
+                <input class="button-primary" type="button" value="Preview" id="txPreview">
+                <textarea id="txPayload" class="u-full-width" readonly rows="5"></textarea>
                 <input class="button-primary" type="submit" value="Send">
                 <textarea id="txOutput" class="u-full-width"></textarea>
                 <ul id="txHistory"></ul>
