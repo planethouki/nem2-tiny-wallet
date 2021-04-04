@@ -25,8 +25,34 @@ async function getInfo(privateKey, endpoint, callback) {
         })
     callback(error, mosaics, pubkey, address)
 }
+async function sendTransferTransaction(signedTxPayload, signedTxHash, endpoint, callback) {
+    const request = new Request(
+        `${endpoint}/transactions`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ payload: signedTxPayload }),
+            mode: 'cors'
+        }
+    )
+    fetch(request)
+        .then(res => res.json())
+        .then((res) => {
+            callback(
+                null,
+                JSON.stringify(res),
+                signedTxHash
+            )
+        })
+        .catch((e) => {
+            console.error(e)
+            callback(e)
+        })
+}
 
-async function transferTransaction(privateKey, endpoint, recipientPlainAddress, fee, mosaicId, amount, callback) {
+async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddress, fee, mosaicId, amount, callback) {
     // eslint-disable-next-line no-unused-vars
     const { network, generationHash } = await fetch(`${endpoint}/node/info`)
         .then(res => res.json())
@@ -65,35 +91,40 @@ async function transferTransaction(privateKey, endpoint, recipientPlainAddress, 
         txPayload.substr((8 + 64) * 2)
 
     const signedTxHash = await getTransactionHash(signedTxPayload, generationHash)
-    const request = new Request(
-        `${endpoint}/transactions`,
-        {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ payload: signedTxPayload }),
-            mode: 'cors'
-        }
-    )
-    fetch(request)
-        .then(res => res.json())
-        .then((res) => {
-            callback(
-                null,
-                JSON.stringify(res),
-                signedTxHash
-            )
-        })
-        .catch((e) => {
-            console.error(e)
-            callback(e)
-        })
+
+    callback(null, signedTxPayload, signedTxHash)
+}
+
+function showPayload() {
+    const isValid = txForm.checkValidity() && acForm.checkValidity()
+    if (isValid) {
+        const privateKey = acForm["privKey"].value.toUpperCase()
+        const endpoint = acForm["endpoint"].value
+        const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
+        const mosaicId = txForm["mosaicId"].value.toUpperCase()
+        const amount = txForm["amount"].value.toUpperCase()
+        const fee = txForm["fee"].value.toUpperCase()
+        makeTransferTransaction(
+            privateKey,
+            endpoint,
+            recipient,
+            fee,
+            mosaicId,
+            amount,
+            function(error, signedTxPayload, signedTxHash) {
+                document.getElementById('txPayload').value = JSON.stringify({
+                    hash: signedTxHash,
+                    payload: signedTxPayload
+                })
+            }
+        )
+    }
 }
 
 const acForm = document.getElementById('account')
 const foForm = document.getElementById('info')
 const txForm = document.getElementById('transaction')
+document.getElementById('txPreview').addEventListener('click', showPayload)
 txForm.addEventListener('submit', (e) => {
     e.preventDefault()
     const isValid = txForm.checkValidity() && acForm.checkValidity()
@@ -104,26 +135,30 @@ txForm.addEventListener('submit', (e) => {
         const mosaicId = txForm["mosaicId"].value.toUpperCase()
         const amount = txForm["amount"].value.toUpperCase()
         const fee = txForm["fee"].value.toUpperCase()
-        transferTransaction(
+        makeTransferTransaction(
             privateKey,
             endpoint,
             recipient,
             fee,
             mosaicId,
             amount,
-            function (error, status, hash) {
-                if (error) {
-                    document.getElementById("txOutput").value = JSON.stringify(error);
-                    return;
-                }
-                const a = document.createElement("a");
-                a.setAttribute("href", endpoint + "/transactionStatus/" + hash);
-                a.setAttribute("target", "_blank");
-                a.appendChild(document.createTextNode(hash.substr(0, 4) + "..."));
-                const li = document.createElement("li");
-                li.appendChild(a);
-                document.getElementById("txHistory").appendChild(li);
-                document.getElementById("txOutput").value = status;
+            function(error, signedTxPayload, signedTxHash) {
+                sendTransferTransaction(signedTxPayload, signedTxHash, endpoint,
+                    function (error, status, hash) {
+                        if (error) {
+                            document.getElementById("txOutput").value = JSON.stringify(error);
+                            return;
+                        }
+                        const a = document.createElement("a");
+                        a.setAttribute("href", endpoint + "/transactionStatus/" + hash);
+                        a.setAttribute("target", "_blank");
+                        a.appendChild(document.createTextNode(hash.substr(0, 4) + "..."));
+                        const li = document.createElement("li");
+                        li.appendChild(a);
+                        document.getElementById("txHistory").appendChild(li);
+                        document.getElementById("txOutput").value = status;
+                    }
+                )
             }
         )
     }
