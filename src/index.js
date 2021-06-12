@@ -1,6 +1,7 @@
 const { endian, parseNodeVersion } = require('./utils/independence')
 const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
+const MessageElm = require('./utils/messageElm')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getAccountInfo(privateKey, endpoint, callback) {
@@ -209,14 +210,18 @@ aiForm.addEventListener('submit', (e) =>{
 })
 eiForm.addEventListener('submit', (e) =>{
     e.preventDefault()
+    const messageElm = new MessageElm('ei-message')
     const isValid = eiForm.checkValidity() && acForm.checkValidity()
     if (isValid) {
+        messageElm.startLoading()
         const endpoint = acForm["endpoint"].value
-        getEndpointInfo(endpoint, function(error, { node, network, chain }) {
+        getEndpointInfo(endpoint, function(error, result) {
+            messageElm.finishLoading()
             if (error) {
-                document.getElementById('node-info').value = JSON.stringify(error);
+                messageElm.setError(error)
                 return;
             }
+            const { node, network, chain } = result
             document.getElementById('ei-node-version').innerText = parseNodeVersion(node.version)
             document.getElementById('ei-node-generation-hash').innerText = node.networkGenerationHashSeed
             document.getElementById('ei-chain-height').innerText = chain.height
