@@ -4454,17 +4454,15 @@ nacl.setPRNG = function(fn) {
 })(typeof module !== 'undefined' && module.exports ? module.exports : (self.nacl = self.nacl || {}));
 
 },{"crypto":3}],6:[function(require,module,exports){
-const { endian, parseNodeVersion } = require('./utils/independence')
+const { endian, parseNodeVersion, dec2hex8 } = require('./utils/independence')
 const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
 const MessageElm = require('./utils/messageElm')
+const TxHistoryElm = require('./utils/txHistoryElm')
+const BalanceTable = require('./utils/balanceTable')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getAccountInfo(privateKey, endpoint, callback) {
-    // eslint-disable-next-line no-unused-vars
-    const network = await fetch(`${endpoint}/node/info`)
-        .then(res => res.json())
-        .then(nodeInfo => nodeInfo.networkIdentifier)
     const n = new Nem2(privateKey)
     const pubkey = n.getPublicKey()
     const address = getBase32EncodeAddress(await publicKeyToHexAddress(pubkey))
@@ -4473,17 +4471,12 @@ async function getAccountInfo(privateKey, endpoint, callback) {
             if (res.ok) return res.json()
             throw new Error(`${res.status} ${res.statusText}`)
         })
-        .then(res => res.account)
-        .then((accountInfo) => {
-            return {
-                mosaics: JSON.stringify(accountInfo.mosaics).replace(/},{/g,"},\n{")
-            }
-        })
+        .then(res => { return { mosaics: res.account.mosaics } })
         .catch((error) => {
             console.error(error)
             return { error }
         })
-    callback(error, mosaics, pubkey, address)
+    callback(error, { mosaics, pubkey, address })
 }
 async function getEndpointInfo(endpoint, callback) {
     // eslint-disable-next-line no-unused-vars
@@ -4549,9 +4542,7 @@ async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddre
         .then((nodeTime) => {
             return Number(nodeTime.communicationTimestamps.sendTimestamp)
         })
-    console.log(serverTime)
     const deadline = n.createDeadline(serverTime + 2 * 3600 * 1000)
-    console.log(deadline)
     const recipient = getBase32DecodeAddress(recipientPlainAddress)
     const txPayload =
         "B000000000000000" +
@@ -4571,52 +4562,28 @@ async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddre
         txPayload.substr((8 + 64) * 2)
 
     const signedTxHash = await getTransactionHash(signedTxPayload, generationHash)
+    console.log(signedTxPayload)
 
     callback(null, signedTxPayload, signedTxHash)
-}
-
-function showPayload() {
-    const isValid = txForm.checkValidity() && acForm.checkValidity()
-    if (isValid) {
-        const privateKey = acForm["privKey"].value.toUpperCase()
-        const endpoint = acForm["endpoint"].value
-        const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
-        const mosaicId = txForm["mosaicId"].value.toUpperCase()
-        const amount = txForm["amount"].value.toUpperCase()
-        const fee = txForm["fee"].value.toUpperCase()
-        makeTransferTransaction(
-            privateKey,
-            endpoint,
-            recipient,
-            fee,
-            mosaicId,
-            amount,
-            function(error, signedTxPayload, signedTxHash) {
-                document.getElementById('tx-hash').innerText = signedTxHash
-                document.getElementById('tx-payload').innerText = signedTxPayload
-            }
-        )
-    } else {
-        txForm.reportValidity()
-        acForm.reportValidity()
-    }
 }
 
 const acForm = document.getElementById('account-input')
 const eiForm = document.getElementById('endpoint-info')
 const aiForm = document.getElementById('account-info')
 const txForm = document.getElementById('transaction')
-document.getElementById('txPreview').addEventListener('click', showPayload)
 txForm.addEventListener('submit', (e) => {
     e.preventDefault()
+    const messageElm = new MessageElm('tx-message')
     const isValid = txForm.checkValidity() && acForm.checkValidity()
     if (isValid) {
+        messageElm.startLoading()
         const privateKey = acForm["privKey"].value.toUpperCase()
         const endpoint = acForm["endpoint"].value
         const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
         const mosaicId = txForm["mosaicId"].value.toUpperCase()
-        const amount = txForm["amount"].value.toUpperCase()
-        const fee = txForm["fee"].value.toUpperCase()
+        const amount = dec2hex8(txForm["amount"].value)
+        const fee = dec2hex8(txForm["fee"].value)
+        const isDryRun = txForm["txIsDryRn"].checked
         makeTransferTransaction(
             privateKey,
             endpoint,
@@ -4625,20 +4592,27 @@ txForm.addEventListener('submit', (e) => {
             mosaicId,
             amount,
             function(error, signedTxPayload, signedTxHash) {
+                if (error) {
+                    messageElm.setError(error)
+                    return;
+                }
+                document.getElementById('tx-hash').innerText = signedTxHash
+                document.getElementById('tx-payload').innerText = signedTxPayload
+                if (isDryRun) {
+                    messageElm.finishLoading()
+                    document.getElementById("txOutput").innerText = ""
+                    return
+                }
                 sendTransferTransaction(signedTxPayload, signedTxHash, endpoint,
                     function (error, status, hash) {
+                        messageElm.finishLoading()
                         if (error) {
-                            document.getElementById("txOutput").value = JSON.stringify(error);
+                            messageElm.setError(error)
                             return;
                         }
-                        const a = document.createElement("a");
-                        a.setAttribute("href", endpoint + "/transactionStatus/" + hash);
-                        a.setAttribute("target", "_blank");
-                        a.appendChild(document.createTextNode(hash.substr(0, 4) + "..."));
-                        const li = document.createElement("li");
-                        li.appendChild(a);
-                        document.getElementById("txHistory").appendChild(li);
-                        document.getElementById("txOutput").value = status;
+                        const elm = new TxHistoryElm('txHistory', endpoint)
+                        elm.append(hash)
+                        document.getElementById("txOutput").innerText = status;
                     }
                 )
             }
@@ -4656,12 +4630,15 @@ aiForm.addEventListener('submit', (e) =>{
         messageElm.startLoading()
         const privateKey = acForm["privKey"].value.toUpperCase()
         const endpoint = acForm["endpoint"].value
-        getAccountInfo(privateKey, endpoint, function(error, mosaics, pubkey, address) {
+        getAccountInfo(privateKey, endpoint, function(error, result) {
             messageElm.finishLoading()
             if (error) {
                 messageElm.setError(error)
                 return;
             }
+            const { mosaics, pubkey, address } = result
+            const elm = new BalanceTable('balanceOutput')
+            mosaics.forEach(m => elm.append(m.id, m.amount))
             document.getElementById('balanceOutput').value = mosaics
             document.getElementById('pubKey').value = pubkey
             document.getElementById('addr').value = address
@@ -4696,7 +4673,34 @@ eiForm.addEventListener('submit', (e) =>{
     }
 })
 
-},{"./utils/base32":7,"./utils/hash":8,"./utils/independence":9,"./utils/messageElm":10,"./utils/nem2":11}],7:[function(require,module,exports){
+},{"./utils/balanceTable":7,"./utils/base32":8,"./utils/hash":9,"./utils/independence":10,"./utils/messageElm":11,"./utils/nem2":12,"./utils/txHistoryElm":13}],7:[function(require,module,exports){
+class BalanceTable {
+    constructor(id) {
+        this.tableElm = document.getElementById(id)
+        const oldTbodys = this.tableElm.getElementsByTagName('tbody')
+        for (let i = 0; i < oldTbodys.length; i++) {
+            oldTbodys[i].remove()
+        }
+        const tbody = document.createElement('tbody')
+        this.tableElm.appendChild(tbody)
+        this.tbodyElm = tbody
+    }
+
+    append(mosaicId, amount) {
+        const mosaicTd = document.createElement('td')
+        mosaicTd.innerText = mosaicId
+        const amountTd = document.createElement('td')
+        amountTd.innerText = amount
+        const tr = document.createElement('tr')
+        tr.appendChild(mosaicTd)
+        tr.appendChild(amountTd)
+        this.tbodyElm.appendChild(tr)
+    }
+}
+
+module.exports = BalanceTable;
+
+},{}],8:[function(require,module,exports){
 const base32Decode = require('base32-decode');
 const base32Encode = require('base32-encode');
 const { uint8ArrayToHex, hexToUint8Array } = require('./independence');
@@ -4717,7 +4721,7 @@ module.exports = {
     getBase32EncodeAddress
 }
 
-},{"./independence":9,"base32-decode":1,"base32-encode":2}],8:[function(require,module,exports){
+},{"./independence":10,"base32-decode":1,"base32-encode":2}],9:[function(require,module,exports){
 const { hexToUint8Array } = require('./independence')
 const hash = require('hash-wasm')
 
@@ -4759,7 +4763,7 @@ module.exports = {
     publicKeyToHexAddress
 }
 
-},{"./independence":9,"hash-wasm":4}],9:[function(require,module,exports){
+},{"./independence":10,"hash-wasm":4}],10:[function(require,module,exports){
 function endian(hex) {
     const result = [];
     let len = hex.length - 2;
@@ -4794,14 +4798,19 @@ function parseNodeVersion(num) {
     return strArray.join('.')
 }
 
+function dec2hex8(num) {
+    return `0000000000000000${Number(num).toString(16)}`.substr(-16).toUpperCase()
+}
+
 module.exports = {
     endian,
     uint8ArrayToHex,
     hexToUint8Array,
-    parseNodeVersion
+    parseNodeVersion,
+    dec2hex8
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 class MessageElm {
     constructor(id) {
         this.elm = document.getElementById(id)
@@ -4809,7 +4818,7 @@ class MessageElm {
     }
 
     startLoading() {
-        this.elm.innerText = 'getting...'
+        this.elm.innerText = 'wait...'
     }
 
     finishLoading() {
@@ -4827,7 +4836,7 @@ class MessageElm {
 
 module.exports = MessageElm;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 const { uint8ArrayToHex, hexToUint8Array } = require('./independence');
 const tweetnacl = require('tweetnacl');
 
@@ -4859,4 +4868,25 @@ class Nem2 {
 
 module.exports = Nem2;
 
-},{"./independence":9,"tweetnacl":5}]},{},[6]);
+},{"./independence":10,"tweetnacl":5}],13:[function(require,module,exports){
+class TxHistoryElm {
+    constructor(elementId, endpoint) {
+        this.elm = document.getElementById(elementId)
+        this.endpoint = endpoint
+    }
+
+    append(hash) {
+        const a = document.createElement("a")
+        a.setAttribute("href", this.endpoint + "/transactionStatus/" + hash)
+        a.setAttribute("target", "_blank")
+        a.setAttribute('style', 'word-break: break-all;')
+        a.appendChild(document.createTextNode(hash))
+        const li = document.createElement("li")
+        li.appendChild(a);
+        this.elm.appendChild(li)
+    }
+}
+
+module.exports = TxHistoryElm;
+
+},{}]},{},[6]);

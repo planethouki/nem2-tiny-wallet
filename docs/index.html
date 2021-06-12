@@ -16,6 +16,7 @@
 <body>
     <div class="container" style="margin-top:1rem;">
         <h4>nem2-tiny-wallet</h4>
+        <a href="https://github.com/planethouki/nem2-tiny-wallet" target="_blank" style="position: absolute;top: 0;right: 20px;">repo</a>
         <form id="account-input">
             <label for="privKey">Private Key</label>
             <input
@@ -79,8 +80,16 @@
                 <input id="pubKey" name="pubKey" class="u-full-width" type="text" disabled>
                 <label for="addr">Address</label>
                 <input id="addr" name="addr" class="u-full-width" type="text" disabled>
-                <label for="balanceOutput">Balance</label>
-                <textarea id="balanceOutput" class="u-full-width" disabled></textarea>
+                <table id="balanceOutput" class="u-full-width">
+                    <thead>
+                    <tr>
+                        <th>Mosaic Id</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </fieldset>
         </form>
         <form id="transaction">
@@ -120,55 +129,44 @@
                         </datalist>
                     </div>
                     <div class="six columns">
-                        <label for="amount">Amount (8byte Hex String)</label>
+                        <label for="amount">Amount</label>
                         <input
                                 id="amount"
                                 name="amount"
                                 class="u-full-width"
-                                type="text"
-                                maxlength="16"
-                                minlength="16"
-                                pattern="^[0-9A-Fa-f]+$"
+                                type="number"
+                                min="0"
+                                step="1"
                                 required
                                 autocomplete="on"
-                                list="amountList"
-                                placeholder="0000000000004E20"
-                                value="0000000000004E20"
+                                placeholder="1000000"
+                                value="1000000"
                         />
                     </div>
                 </div>
                 <div class="row">
                     <div class="six columns">
-                        <label for="fee">Fee (8byte Hex String)</label>
+                        <label for="fee">Fee</label>
                         <input
                                 id="fee"
                                 name="fee"
                                 class="u-full-width"
-                                type="text"
-                                maxlength="16"
-                                minlength="16"
-                                pattern="^[0-9A-Fa-f]+$"
+                                type="number"
+                                min="0"
+                                step="1"
                                 required
                                 autocomplete="on"
-                                list="amountList"
-                                placeholder="00000000000F4240"
-                                value="00000000000F4240"
+                                placeholder="20000"
+                                value="20000"
                         />
                     </div>
                 </div>
-                <datalist id="amountList">
-                    <option value="0000000000000001">
-                    <option value="000000000000000A">
-                    <option value="0000000000000064">
-                    <option value="00000000000003E8">
-                    <option value="0000000000002710">
-                    <option value="00000000000186A0">
-                    <option value="00000000000F4240">
-                    <option value="0000000000989680">
-                    <option value="0000000005F5E100">
-                    <option value="000000003B9ACA00">
-                </datalist>
-                <input class="button-primary" type="button" value="Dry Run" id="txPreview" style="line-height: 26px; height: 26px;">
+                <label for="txIsDryRn">
+                    <input type="checkbox" name="txIsDryRn" id="txIsDryRn">
+                    <span class="label-body">Dry Run</span>
+                </label>
+                <input class="button-primary" type="submit" value="Send">
+                <span id="tx-message"></span>
                 <table class="u-full-width">
                     <tbody>
                     <tr>
@@ -179,11 +177,14 @@
                         <td>Payload</td>
                         <td><span id="tx-payload" style="word-break: break-all;"></span></td>
                     </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td><span id="txOutput" style="word-break: break-all;"></span></td>
+                    </tr>
                     </tbody>
                 </table>
-                <input class="button-primary" type="submit" value="Send">
-                <textarea id="txOutput" class="u-full-width"></textarea>
-                <ul id="txHistory"></ul>
+                <ul id="txHistory" style="list-style: none;">
+                </ul>
             </fieldset>
         </form>
     </div>
