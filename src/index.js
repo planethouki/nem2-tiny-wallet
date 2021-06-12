@@ -13,7 +13,10 @@ async function getAccountInfo(privateKey, endpoint, callback) {
     const pubkey = n.getPublicKey()
     const address = getBase32EncodeAddress(await publicKeyToHexAddress(pubkey))
     const { error, mosaics } = await fetch(`${endpoint}/accounts/${address}`)
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) return res.json()
+            throw new Error(`${res.status} ${res.statusText}`)
+        })
         .then(res => res.account)
         .then((accountInfo) => {
             return {
@@ -191,13 +194,16 @@ txForm.addEventListener('submit', (e) => {
 })
 aiForm.addEventListener('submit', (e) =>{
     e.preventDefault()
+    const messageElm = new MessageElm('ai-message')
     const isValid = aiForm.checkValidity() && acForm.checkValidity()
     if (isValid) {
+        messageElm.startLoading()
         const privateKey = acForm["privKey"].value.toUpperCase()
         const endpoint = acForm["endpoint"].value
         getAccountInfo(privateKey, endpoint, function(error, mosaics, pubkey, address) {
+            messageElm.finishLoading()
             if (error) {
-                document.getElementById('balanceOutput').value = JSON.stringify(error);
+                messageElm.setError(error)
                 return;
             }
             document.getElementById('balanceOutput').value = mosaics
