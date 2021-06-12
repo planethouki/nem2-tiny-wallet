@@ -141,19 +141,20 @@ txForm.addEventListener('submit', (e) => {
             mosaicId,
             amount,
             function(error, signedTxPayload, signedTxHash) {
+                document.getElementById('tx-hash').innerText = signedTxHash
+                document.getElementById('tx-payload').innerText = signedTxPayload
                 if (isDryRun) {
                     if (error) {
-                        document.getElementById("txOutput").value = JSON.stringify(error);
+                        document.getElementById("txOutput").innerText = JSON.stringify(error);
                         return;
                     }
-                    document.getElementById('tx-hash').innerText = signedTxHash
-                    document.getElementById('tx-payload').innerText = signedTxPayload
+                    document.getElementById("txOutput").innerText = ""
                     return
                 }
                 sendTransferTransaction(signedTxPayload, signedTxHash, endpoint,
                     function (error, status, hash) {
                         if (error) {
-                            document.getElementById("txOutput").value = JSON.stringify(error);
+                            document.getElementById("txOutput").innerText = JSON.stringify(error);
                             return;
                         }
                         const a = document.createElement("a");
@@ -163,7 +164,7 @@ txForm.addEventListener('submit', (e) => {
                         const li = document.createElement("li");
                         li.appendChild(a);
                         document.getElementById("txHistory").appendChild(li);
-                        document.getElementById("txOutput").value = status;
+                        document.getElementById("txOutput").innerText = status;
                     }
                 )
             }
