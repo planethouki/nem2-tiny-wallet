@@ -94,7 +94,6 @@ async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddre
             return Number(nodeTime.communicationTimestamps.sendTimestamp)
         })
     const deadline = n.createDeadline(serverTime + 2 * 3600 * 1000)
-    console.log(deadline)
     const recipient = getBase32DecodeAddress(recipientPlainAddress)
     const txPayload =
         "B000000000000000" +
@@ -119,38 +118,10 @@ async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddre
     callback(null, signedTxPayload, signedTxHash)
 }
 
-function showPayload() {
-    const isValid = txForm.checkValidity() && acForm.checkValidity()
-    if (isValid) {
-        const privateKey = acForm["privKey"].value.toUpperCase()
-        const endpoint = acForm["endpoint"].value
-        const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
-        const mosaicId = txForm["mosaicId"].value.toUpperCase()
-        const amount = txForm["amount"].value.toUpperCase()
-        const fee = txForm["fee"].value.toUpperCase()
-        makeTransferTransaction(
-            privateKey,
-            endpoint,
-            recipient,
-            fee,
-            mosaicId,
-            amount,
-            function(error, signedTxPayload, signedTxHash) {
-                document.getElementById('tx-hash').innerText = signedTxHash
-                document.getElementById('tx-payload').innerText = signedTxPayload
-            }
-        )
-    } else {
-        txForm.reportValidity()
-        acForm.reportValidity()
-    }
-}
-
 const acForm = document.getElementById('account-input')
 const eiForm = document.getElementById('endpoint-info')
 const aiForm = document.getElementById('account-info')
 const txForm = document.getElementById('transaction')
-document.getElementById('txPreview').addEventListener('click', showPayload)
 txForm.addEventListener('submit', (e) => {
     e.preventDefault()
     const isValid = txForm.checkValidity() && acForm.checkValidity()
@@ -161,6 +132,7 @@ txForm.addEventListener('submit', (e) => {
         const mosaicId = txForm["mosaicId"].value.toUpperCase()
         const amount = dec2hex8(txForm["amount"].value)
         const fee = dec2hex8(txForm["fee"].value)
+        const isDryRun = txForm["txIsDryRn"].checked
         makeTransferTransaction(
             privateKey,
             endpoint,
@@ -169,6 +141,15 @@ txForm.addEventListener('submit', (e) => {
             mosaicId,
             amount,
             function(error, signedTxPayload, signedTxHash) {
+                if (isDryRun) {
+                    if (error) {
+                        document.getElementById("txOutput").value = JSON.stringify(error);
+                        return;
+                    }
+                    document.getElementById('tx-hash').innerText = signedTxHash
+                    document.getElementById('tx-payload').innerText = signedTxPayload
+                    return
+                }
                 sendTransferTransaction(signedTxPayload, signedTxHash, endpoint,
                     function (error, status, hash) {
                         if (error) {

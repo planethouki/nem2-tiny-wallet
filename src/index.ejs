@@ -153,7 +153,11 @@
                         />
                     </div>
                 </div>
-                <input class="button-primary" type="button" value="Dry Run" id="txPreview" style="line-height: 26px; height: 26px;">
+                <label for="txIsDryRn">
+                    <input type="checkbox" name="txIsDryRn" id="txIsDryRn">
+                    <span class="label-body">Dry Run</span>
+                </label>
+                <input class="button-primary" type="submit" value="Send">
                 <table class="u-full-width">
                     <tbody>
                     <tr>
@@ -166,7 +170,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <input class="button-primary" type="submit" value="Send">
                 <textarea id="txOutput" class="u-full-width"></textarea>
                 <ul id="txHistory"></ul>
             </fieldset>

@@ -16,4 +16,4 @@ demo https://planethouki.github.io/nem2-tiny-wallet/
 - [ ] Account Balance Table
 - [ ] Transaction Hash Text Longer
 - [ ] Transaction MessageElm
-- [ ] Transaction Dry Run Checkbox
+- [x] Transaction Dry Run Checkbox
