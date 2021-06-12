@@ -80,8 +80,16 @@
                 <input id="pubKey" name="pubKey" class="u-full-width" type="text" disabled>
                 <label for="addr">Address</label>
                 <input id="addr" name="addr" class="u-full-width" type="text" disabled>
-                <label for="balanceOutput">Balance</label>
-                <textarea id="balanceOutput" class="u-full-width" disabled></textarea>
+                <table id="balanceOutput" class="u-full-width">
+                    <thead>
+                    <tr>
+                        <th>Mosaic Id</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </fieldset>
         </form>
         <form id="transaction">

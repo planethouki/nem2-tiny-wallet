@@ -3,6 +3,7 @@ const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
 const MessageElm = require('./utils/messageElm')
 const TxHistoryElm = require('./utils/txHistoryElm')
+const BalanceTable = require('./utils/balanceTable')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getAccountInfo(privateKey, endpoint, callback) {
@@ -14,17 +15,12 @@ async function getAccountInfo(privateKey, endpoint, callback) {
             if (res.ok) return res.json()
             throw new Error(`${res.status} ${res.statusText}`)
         })
-        .then(res => res.account)
-        .then((accountInfo) => {
-            return {
-                mosaics: JSON.stringify(accountInfo.mosaics).replace(/},{/g,"},\n{")
-            }
-        })
+        .then(res => { return { mosaics: res.account.mosaics } })
         .catch((error) => {
             console.error(error)
             return { error }
         })
-    callback(error, mosaics, pubkey, address)
+    callback(error, { mosaics, pubkey, address })
 }
 async function getEndpointInfo(endpoint, callback) {
     // eslint-disable-next-line no-unused-vars
@@ -178,12 +174,15 @@ aiForm.addEventListener('submit', (e) =>{
         messageElm.startLoading()
         const privateKey = acForm["privKey"].value.toUpperCase()
         const endpoint = acForm["endpoint"].value
-        getAccountInfo(privateKey, endpoint, function(error, mosaics, pubkey, address) {
+        getAccountInfo(privateKey, endpoint, function(error, result) {
             messageElm.finishLoading()
             if (error) {
                 messageElm.setError(error)
                 return;
             }
+            const { mosaics, pubkey, address } = result
+            const elm = new BalanceTable('balanceOutput')
+            mosaics.forEach(m => elm.append(m.id, m.amount))
             document.getElementById('balanceOutput').value = mosaics
             document.getElementById('pubKey').value = pubkey
             document.getElementById('addr').value = address
