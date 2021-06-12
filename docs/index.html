@@ -52,19 +52,19 @@
                     <tbody>
                     <tr>
                         <td>Node Version</td>
-                        <td><span id="ei-node-version"></span></td>
+                        <td><span id="ei-node-version" style="word-break: break-all;"></span></td>
                     </tr>
                     <tr>
                         <td>Generation Hash</td>
-                        <td><span id="ei-node-generation-hash"></span></td>
+                        <td><span id="ei-node-generation-hash" style="word-break: break-all;"></span></td>
                     </tr>
                     <tr>
                         <td>Chain Height</td>
-                        <td><span id="ei-chain-height"></span></td>
+                        <td><span id="ei-chain-height" style="word-break: break-all;"></span></td>
                     </tr>
                     <tr>
                         <td>Network Identifier</td>
-                        <td><span id="ei-network-identifier"></span></td>
+                        <td><span id="ei-network-identifier" style="word-break: break-all;"></span></td>
                     </tr>
                     </tbody>
                 </table>
@@ -74,6 +74,7 @@
             <fieldset>
                 <legend>Account Info</legend>
                 <input class="button-primary" type="submit" value="Get">
+                <span id="ai-message"></span>
                 <label for="pubKey">Public Key</label>
                 <input id="pubKey" name="pubKey" class="u-full-width" type="text" disabled>
                 <label for="addr">Address</label>
@@ -167,8 +168,19 @@
                     <option value="0000000005F5E100">
                     <option value="000000003B9ACA00">
                 </datalist>
-                <input class="button-primary" type="button" value="Preview" id="txPreview">
-                <textarea id="txPayload" class="u-full-width" readonly rows="5"></textarea>
+                <input class="button-primary" type="button" value="Dry Run" id="txPreview" style="line-height: 26px; height: 26px;">
+                <table class="u-full-width">
+                    <tbody>
+                    <tr>
+                        <td>Hash</td>
+                        <td><span id="tx-hash" style="word-break: break-all;"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Payload</td>
+                        <td><span id="tx-payload" style="word-break: break-all;"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
                 <input class="button-primary" type="submit" value="Send">
                 <textarea id="txOutput" class="u-full-width"></textarea>
                 <ul id="txHistory"></ul>
