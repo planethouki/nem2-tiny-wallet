@@ -1,6 +1,6 @@
 # nem2-tiny-wallet
 
-symbol testnet 0.10.0.x compatible
+symbol testnet 1.0.0.0 compatible
 
 symbol-sdkを使わないウォレット
 
