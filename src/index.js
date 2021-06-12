@@ -6,10 +6,6 @@ const TxHistoryElm = require('./utils/txHistoryElm')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getAccountInfo(privateKey, endpoint, callback) {
-    // eslint-disable-next-line no-unused-vars
-    const network = await fetch(`${endpoint}/node/info`)
-        .then(res => res.json())
-        .then(nodeInfo => nodeInfo.networkIdentifier)
     const n = new Nem2(privateKey)
     const pubkey = n.getPublicKey()
     const address = getBase32EncodeAddress(await publicKeyToHexAddress(pubkey))
