@@ -182,6 +182,9 @@ txForm.addEventListener('submit', (e) => {
                 )
             }
         )
+    } else {
+        txForm.reportValidity()
+        acForm.reportValidity()
     }
 })
 aiForm.addEventListener('submit', (e) =>{
@@ -199,6 +202,9 @@ aiForm.addEventListener('submit', (e) =>{
             document.getElementById('pubKey').value = pubkey
             document.getElementById('addr').value = address
         })
+    } else {
+        aiForm.reportValidity()
+        acForm.reportValidity()
     }
 })
 eiForm.addEventListener('submit', (e) =>{
@@ -216,5 +222,8 @@ eiForm.addEventListener('submit', (e) =>{
             document.getElementById('ei-chain-height').innerText = chain.height
             document.getElementById('ei-network-identifier').innerText = network.identifier
         })
+    } else {
+        eiForm.reportValidity()
+        acForm.reportValidity()
     }
 })
