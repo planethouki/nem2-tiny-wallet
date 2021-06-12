@@ -4454,9 +4454,10 @@ nacl.setPRNG = function(fn) {
 })(typeof module !== 'undefined' && module.exports ? module.exports : (self.nacl = self.nacl || {}));
 
 },{"crypto":3}],6:[function(require,module,exports){
-const { endian } = require('./utils/independence')
+const { endian, parseNodeVersion } = require('./utils/independence')
 const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
+const MessageElm = require('./utils/messageElm')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getAccountInfo(privateKey, endpoint, callback) {
@@ -4485,13 +4486,11 @@ async function getEndpointInfo(endpoint, callback) {
     // eslint-disable-next-line no-unused-vars
     const nodePromise = fetch(`${endpoint}/node/info`)
         .then(res => res.json())
-        .then(info => JSON.stringify(info))
     const networkPromise = fetch(`${endpoint}/network/properties`)
         .then(res => res.json())
-        .then(info => JSON.stringify(info.network))
+        .then(info => info.network)
     const chainPromise = fetch(`${endpoint}/chain/info`)
         .then(res => res.json())
-        .then(info => JSON.stringify(info))
     const { error, result } = await Promise
         .all([nodePromise, networkPromise, chainPromise])
         .then(([node, network, chain]) => {
@@ -4640,6 +4639,9 @@ txForm.addEventListener('submit', (e) => {
                 )
             }
         )
+    } else {
+        txForm.reportValidity()
+        acForm.reportValidity()
     }
 })
 aiForm.addEventListener('submit', (e) =>{
@@ -4657,25 +4659,37 @@ aiForm.addEventListener('submit', (e) =>{
             document.getElementById('pubKey').value = pubkey
             document.getElementById('addr').value = address
         })
+    } else {
+        aiForm.reportValidity()
+        acForm.reportValidity()
     }
 })
 eiForm.addEventListener('submit', (e) =>{
     e.preventDefault()
+    const messageElm = new MessageElm('ei-message')
     const isValid = eiForm.checkValidity() && acForm.checkValidity()
     if (isValid) {
+        messageElm.startLoading()
         const endpoint = acForm["endpoint"].value
-        getEndpointInfo(endpoint, function(error, { node, network, chain }) {
+        getEndpointInfo(endpoint, function(error, result) {
+            messageElm.finishLoading()
             if (error) {
-                document.getElementById('node-info').value = JSON.stringify(error);
+                messageElm.setError(error)
                 return;
             }
-            document.getElementById('endpoint-info-result').value
-                = `Node Info\n${node}\nNetwork Info\n${network}\nChain Info\n${chain}`
+            const { node, network, chain } = result
+            document.getElementById('ei-node-version').innerText = parseNodeVersion(node.version)
+            document.getElementById('ei-node-generation-hash').innerText = node.networkGenerationHashSeed
+            document.getElementById('ei-chain-height').innerText = chain.height
+            document.getElementById('ei-network-identifier').innerText = network.identifier
         })
+    } else {
+        eiForm.reportValidity()
+        acForm.reportValidity()
     }
 })
 
-},{"./utils/base32":7,"./utils/hash":8,"./utils/independence":9,"./utils/nem2":10}],7:[function(require,module,exports){
+},{"./utils/base32":7,"./utils/hash":8,"./utils/independence":9,"./utils/messageElm":10,"./utils/nem2":11}],7:[function(require,module,exports){
 const base32Decode = require('base32-decode');
 const base32Encode = require('base32-encode');
 const { uint8ArrayToHex, hexToUint8Array } = require('./independence');
@@ -4762,13 +4776,51 @@ function hexToUint8Array(hex) {
     }))
 }
 
+function parseNodeVersion(num) {
+    const hex = `00000000${Number(num).toString(16)}`.substr(-8)
+    const strArray = []
+    for (let i = 0; i < 8; i += 2) {
+        const octet = Number(`0x${hex[i]}${hex[i + 1]}`).toString(10)
+        strArray.push(octet)
+    }
+
+    return strArray.join('.')
+}
+
 module.exports = {
     endian,
     uint8ArrayToHex,
-    hexToUint8Array
+    hexToUint8Array,
+    parseNodeVersion
 }
 
 },{}],10:[function(require,module,exports){
+class MessageElm {
+    constructor(id) {
+        this.elm = document.getElementById(id)
+        this.elm.innerText = ''
+    }
+
+    startLoading() {
+        this.elm.innerText = 'getting...'
+    }
+
+    finishLoading() {
+        this.elm.innerText = ''
+    }
+
+    setString(str) {
+        this.elm.innerText = str
+    }
+
+    setError(err) {
+        this.elm.innerText = err.toString()
+    }
+}
+
+module.exports = MessageElm;
+
+},{}],11:[function(require,module,exports){
 const { uint8ArrayToHex, hexToUint8Array } = require('./independence');
 const tweetnacl = require('tweetnacl');
 
