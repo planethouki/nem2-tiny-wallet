@@ -121,54 +121,38 @@
                         </datalist>
                     </div>
                     <div class="six columns">
-                        <label for="amount">Amount (8byte Hex String)</label>
+                        <label for="amount">Amount</label>
                         <input
                                 id="amount"
                                 name="amount"
                                 class="u-full-width"
-                                type="text"
-                                maxlength="16"
-                                minlength="16"
-                                pattern="^[0-9A-Fa-f]+$"
+                                type="number"
+                                min="0"
+                                step="1"
                                 required
                                 autocomplete="on"
-                                list="amountList"
-                                placeholder="0000000000004E20"
-                                value="0000000000004E20"
+                                placeholder="1000000"
+                                value="1000000"
                         />
                     </div>
                 </div>
                 <div class="row">
                     <div class="six columns">
-                        <label for="fee">Fee (8byte Hex String)</label>
+                        <label for="fee">Fee</label>
                         <input
                                 id="fee"
                                 name="fee"
                                 class="u-full-width"
-                                type="text"
-                                maxlength="16"
-                                minlength="16"
-                                pattern="^[0-9A-Fa-f]+$"
+                                type="number"
+                                min="0"
+                                step="1"
                                 required
                                 autocomplete="on"
-                                list="amountList"
-                                placeholder="00000000000F4240"
-                                value="00000000000F4240"
+                                placeholder="20000"
+                                value="20000"
                         />
                     </div>
                 </div>
-                <datalist id="amountList">
-                    <option value="0000000000000001">
-                    <option value="000000000000000A">
-                    <option value="0000000000000064">
-                    <option value="00000000000003E8">
-                    <option value="0000000000002710">
-                    <option value="00000000000186A0">
-                    <option value="00000000000F4240">
-                    <option value="0000000000989680">
-                    <option value="0000000005F5E100">
-                    <option value="000000003B9ACA00">
-                </datalist>
                 <input class="button-primary" type="button" value="Dry Run" id="txPreview" style="line-height: 26px; height: 26px;">
                 <table class="u-full-width">
                     <tbody>

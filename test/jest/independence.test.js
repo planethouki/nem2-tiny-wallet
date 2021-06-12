@@ -46,3 +46,9 @@ describe('parseNodeVersion', () => {
         expect(a).toBe('1.0.1.0')
     });
 });
+
+describe('dec2hex8', () => {
+    test('normal', () => {
+        expect(independence.dec2hex8(20000)).toBe('0000000000004E20')
+    });
+});

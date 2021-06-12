@@ -11,8 +11,9 @@ demo https://planethouki.github.io/nem2-tiny-wallet/
 # todo
 
 - [x] GitHub Repository Link
-- [ ] Mosaic Amount Dec
-- [ ] Fee Amount Dec
+- [x] Mosaic Amount Dec
+- [x] Fee Amount Dec
 - [ ] Account Balance Table
 - [ ] Transaction Hash Text Longer
 - [ ] Transaction MessageElm
+- [ ] Transaction Dry Run Checkbox

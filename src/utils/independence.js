@@ -32,9 +32,14 @@ function parseNodeVersion(num) {
     return strArray.join('.')
 }
 
+function dec2hex8(num) {
+    return `0000000000000000${Number(num).toString(16)}`.substr(-16).toUpperCase()
+}
+
 module.exports = {
     endian,
     uint8ArrayToHex,
     hexToUint8Array,
-    parseNodeVersion
+    parseNodeVersion,
+    dec2hex8
 }

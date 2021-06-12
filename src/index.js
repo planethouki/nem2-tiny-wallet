@@ -1,4 +1,4 @@
-const { endian, parseNodeVersion } = require('./utils/independence')
+const { endian, parseNodeVersion, dec2hex8 } = require('./utils/independence')
 const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
 const MessageElm = require('./utils/messageElm')
@@ -93,7 +93,6 @@ async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddre
         .then((nodeTime) => {
             return Number(nodeTime.communicationTimestamps.sendTimestamp)
         })
-    console.log(serverTime)
     const deadline = n.createDeadline(serverTime + 2 * 3600 * 1000)
     console.log(deadline)
     const recipient = getBase32DecodeAddress(recipientPlainAddress)
@@ -115,6 +114,7 @@ async function makeTransferTransaction(privateKey, endpoint, recipientPlainAddre
         txPayload.substr((8 + 64) * 2)
 
     const signedTxHash = await getTransactionHash(signedTxPayload, generationHash)
+    console.log(signedTxPayload)
 
     callback(null, signedTxPayload, signedTxHash)
 }
@@ -159,8 +159,8 @@ txForm.addEventListener('submit', (e) => {
         const endpoint = acForm["endpoint"].value
         const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
         const mosaicId = txForm["mosaicId"].value.toUpperCase()
-        const amount = txForm["amount"].value.toUpperCase()
-        const fee = txForm["fee"].value.toUpperCase()
+        const amount = dec2hex8(txForm["amount"].value)
+        const fee = dec2hex8(txForm["fee"].value)
         makeTransferTransaction(
             privateKey,
             endpoint,
