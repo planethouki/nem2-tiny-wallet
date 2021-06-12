@@ -3,7 +3,7 @@ const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
-async function getInfo(privateKey, endpoint, callback) {
+async function getAccountInfo(privateKey, endpoint, callback) {
     // eslint-disable-next-line no-unused-vars
     const network = await fetch(`${endpoint}/node/info`)
         .then(res => res.json())
@@ -24,6 +24,28 @@ async function getInfo(privateKey, endpoint, callback) {
             return { error }
         })
     callback(error, mosaics, pubkey, address)
+}
+async function getEndpointInfo(endpoint, callback) {
+    // eslint-disable-next-line no-unused-vars
+    const nodePromise = fetch(`${endpoint}/node/info`)
+        .then(res => res.json())
+        .then(info => JSON.stringify(info))
+    const networkPromise = fetch(`${endpoint}/network/properties`)
+        .then(res => res.json())
+        .then(info => JSON.stringify(info.network))
+    const chainPromise = fetch(`${endpoint}/chain/info`)
+        .then(res => res.json())
+        .then(info => JSON.stringify(info))
+    const { error, result } = await Promise
+        .all([nodePromise, networkPromise, chainPromise])
+        .then(([node, network, chain]) => {
+            return { result: { node, network, chain } }
+        })
+        .catch((error) => {
+            console.error(error)
+            return { error }
+        })
+    callback(error, result)
 }
 async function sendTransferTransaction(signedTxPayload, signedTxHash, endpoint, callback) {
     const request = new Request(
@@ -121,8 +143,9 @@ function showPayload() {
     }
 }
 
-const acForm = document.getElementById('account')
-const foForm = document.getElementById('info')
+const acForm = document.getElementById('account-input')
+const eiForm = document.getElementById('endpoint-info')
+const aiForm = document.getElementById('account-info')
 const txForm = document.getElementById('transaction')
 document.getElementById('txPreview').addEventListener('click', showPayload)
 txForm.addEventListener('submit', (e) => {
@@ -163,13 +186,13 @@ txForm.addEventListener('submit', (e) => {
         )
     }
 })
-foForm.addEventListener('submit', (e) =>{
+aiForm.addEventListener('submit', (e) =>{
     e.preventDefault()
-    const isValid = foForm.checkValidity() && acForm.checkValidity()
+    const isValid = aiForm.checkValidity() && acForm.checkValidity()
     if (isValid) {
         const privateKey = acForm["privKey"].value.toUpperCase()
         const endpoint = acForm["endpoint"].value
-        getInfo(privateKey, endpoint, function(error, mosaics, pubkey, address) {
+        getAccountInfo(privateKey, endpoint, function(error, mosaics, pubkey, address) {
             if (error) {
                 document.getElementById('balanceOutput').value = JSON.stringify(error);
                 return;
@@ -177,6 +200,21 @@ foForm.addEventListener('submit', (e) =>{
             document.getElementById('balanceOutput').value = mosaics
             document.getElementById('pubKey').value = pubkey
             document.getElementById('addr').value = address
+        })
+    }
+})
+eiForm.addEventListener('submit', (e) =>{
+    e.preventDefault()
+    const isValid = eiForm.checkValidity() && acForm.checkValidity()
+    if (isValid) {
+        const endpoint = acForm["endpoint"].value
+        getEndpointInfo(endpoint, function(error, { node, network, chain }) {
+            if (error) {
+                document.getElementById('node-info').value = JSON.stringify(error);
+                return;
+            }
+            document.getElementById('endpoint-info-result').value
+                = `Node Info\n${node}\nNetwork Info\n${network}\nChain Info\n${chain}`
         })
     }
 })

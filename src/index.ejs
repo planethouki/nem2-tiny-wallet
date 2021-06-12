@@ -16,7 +16,7 @@
 <body>
     <div class="container" style="margin-top:1rem;">
         <h4>nem2-tiny-wallet</h4>
-        <form id="account">
+        <form id="account-input">
             <label for="privKey">Private Key</label>
             <input
                     id="privKey"
@@ -43,9 +43,17 @@
     </div>
     <h5 id="loading" class="container">Loading...</h5>
     <div id="loaded" class="container" style="display: none;">
-        <form id="info">
+        <form id="endpoint-info">
             <fieldset>
-                <legend>Info</legend>
+                <legend>Endpoint Info</legend>
+                <input class="button-primary" type="submit" value="Get">
+                <label for="node-info">Result</label>
+                <textarea id="endpoint-info-result" class="u-full-width" style="height: 200px;" disabled></textarea>
+            </fieldset>
+        </form>
+        <form id="account-info">
+            <fieldset>
+                <legend>Account Info</legend>
                 <input class="button-primary" type="submit" value="Get">
                 <label for="pubKey">Public Key</label>
                 <input id="pubKey" name="pubKey" class="u-full-width" type="text" disabled>
