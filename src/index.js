@@ -1,4 +1,4 @@
-const { endian } = require('./utils/independence')
+const { endian, parseNodeVersion } = require('./utils/independence')
 const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
@@ -29,13 +29,11 @@ async function getEndpointInfo(endpoint, callback) {
     // eslint-disable-next-line no-unused-vars
     const nodePromise = fetch(`${endpoint}/node/info`)
         .then(res => res.json())
-        .then(info => JSON.stringify(info))
     const networkPromise = fetch(`${endpoint}/network/properties`)
         .then(res => res.json())
-        .then(info => JSON.stringify(info.network))
+        .then(info => info.network)
     const chainPromise = fetch(`${endpoint}/chain/info`)
         .then(res => res.json())
-        .then(info => JSON.stringify(info))
     const { error, result } = await Promise
         .all([nodePromise, networkPromise, chainPromise])
         .then(([node, network, chain]) => {
@@ -213,8 +211,10 @@ eiForm.addEventListener('submit', (e) =>{
                 document.getElementById('node-info').value = JSON.stringify(error);
                 return;
             }
-            document.getElementById('endpoint-info-result').value
-                = `Node Info\n${node}\nNetwork Info\n${network}\nChain Info\n${chain}`
+            document.getElementById('ei-node-version').innerText = parseNodeVersion(node.version)
+            document.getElementById('ei-node-generation-hash').innerText = node.networkGenerationHashSeed
+            document.getElementById('ei-chain-height').innerText = chain.height
+            document.getElementById('ei-network-identifier').innerText = network.identifier
         })
     }
 })

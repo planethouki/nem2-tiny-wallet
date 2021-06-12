@@ -23,4 +23,9 @@ describe('independence', () => {
         expect(a).toContain(2);
     });
 
+    test('parseNodeVersion', () => {
+        const { parseNodeVersion } = independence;
+        const a = parseNodeVersion(16777472);
+        expect(a).toBe('1.0.1.0')
+    });
 });

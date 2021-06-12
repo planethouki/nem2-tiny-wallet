@@ -47,8 +47,32 @@
             <fieldset>
                 <legend>Endpoint Info</legend>
                 <input class="button-primary" type="submit" value="Get">
-                <label for="node-info">Result</label>
-                <textarea id="endpoint-info-result" class="u-full-width" style="height: 200px;" disabled></textarea>
+                <table class="u-full-width">
+                    <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Node Version</td>
+                        <td><span id="ei-node-version"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Generation Hash</td>
+                        <td><span id="ei-node-generation-hash"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Chain Height</td>
+                        <td><span id="ei-chain-height"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Network Identifier</td>
+                        <td><span id="ei-network-identifier"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
             </fieldset>
         </form>
         <form id="account-info">
