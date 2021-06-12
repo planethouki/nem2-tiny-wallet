@@ -18,4 +18,4 @@ demo https://planethouki.github.io/nem2-tiny-wallet/
 - [x] Transaction MessageElm
 - [x] Transaction Dry Run Checkbox
 - [x] Tx Status Table
-- [ ] New Account Info
+- [x] New Account Info
