@@ -4632,16 +4632,16 @@ aiForm.addEventListener('submit', (e) =>{
         const endpoint = acForm["endpoint"].value
         getAccountInfo(privateKey, endpoint, function(error, result) {
             messageElm.finishLoading()
+            const { mosaics, pubkey, address } = result
+            document.getElementById('pubKey').value = pubkey
+            document.getElementById('addr').value = address
             if (error) {
                 messageElm.setError(error)
                 return;
             }
-            const { mosaics, pubkey, address } = result
             const elm = new BalanceTable('balanceOutput')
             mosaics.forEach(m => elm.append(m.id, m.amount))
             document.getElementById('balanceOutput').value = mosaics
-            document.getElementById('pubKey').value = pubkey
-            document.getElementById('addr').value = address
         })
     } else {
         aiForm.reportValidity()
