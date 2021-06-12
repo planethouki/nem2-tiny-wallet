@@ -10,7 +10,7 @@ demo https://planethouki.github.io/nem2-tiny-wallet/
 
 # todo
 
-- [ ] GitHub Link
+- [x] GitHub Repository Link
 - [ ] Mosaic Amount Dec
 - [ ] Fee Amount Dec
 - [ ] Account Balance Table
