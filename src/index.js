@@ -2,6 +2,7 @@ const { endian, parseNodeVersion, dec2hex8 } = require('./utils/independence')
 const { getTransactionHash, publicKeyToHexAddress } = require('./utils/hash')
 const Nem2 = require('./utils/nem2')
 const MessageElm = require('./utils/messageElm')
+const TxHistoryElm = require('./utils/txHistoryElm')
 const { getBase32DecodeAddress, getBase32EncodeAddress } = require('./utils/base32')
 
 async function getAccountInfo(privateKey, endpoint, callback) {
@@ -161,13 +162,8 @@ txForm.addEventListener('submit', (e) => {
                             messageElm.setError(error)
                             return;
                         }
-                        const a = document.createElement("a");
-                        a.setAttribute("href", endpoint + "/transactionStatus/" + hash);
-                        a.setAttribute("target", "_blank");
-                        a.appendChild(document.createTextNode(hash.substr(0, 4) + "..."));
-                        const li = document.createElement("li");
-                        li.appendChild(a);
-                        document.getElementById("txHistory").appendChild(li);
+                        const elm = new TxHistoryElm('txHistory', endpoint)
+                        elm.append(hash)
                         document.getElementById("txOutput").innerText = status;
                     }
                 )

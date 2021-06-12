@@ -14,7 +14,7 @@ demo https://planethouki.github.io/nem2-tiny-wallet/
 - [x] Mosaic Amount Dec
 - [x] Fee Amount Dec
 - [ ] Account Balance Table
-- [ ] Transaction Hash Text Longer
+- [x] Transaction Hash Text Longer
 - [x] Transaction MessageElm
 - [x] Transaction Dry Run Checkbox
 - [x] Tx Status Table
