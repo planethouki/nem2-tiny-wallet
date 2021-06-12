@@ -133,12 +133,13 @@ function showPayload() {
             mosaicId,
             amount,
             function(error, signedTxPayload, signedTxHash) {
-                document.getElementById('txPayload').value = JSON.stringify({
-                    hash: signedTxHash,
-                    payload: signedTxPayload
-                })
+                document.getElementById('tx-hash').innerText = signedTxHash
+                document.getElementById('tx-payload').innerText = signedTxPayload
             }
         )
+    } else {
+        txForm.reportValidity()
+        acForm.reportValidity()
     }
 }
 

@@ -167,8 +167,19 @@
                     <option value="0000000005F5E100">
                     <option value="000000003B9ACA00">
                 </datalist>
-                <input class="button-primary" type="button" value="Preview" id="txPreview">
-                <textarea id="txPayload" class="u-full-width" readonly rows="5"></textarea>
+                <input class="button-primary" type="button" value="Dry Run" id="txPreview" style="line-height: 26px; height: 26px;">
+                <table class="u-full-width">
+                    <tbody>
+                    <tr>
+                        <td>Hash</td>
+                        <td><span id="tx-hash" style="word-break: break-all;"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Payload</td>
+                        <td><span id="tx-payload" style="word-break: break-all;"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
                 <input class="button-primary" type="submit" value="Send">
                 <textarea id="txOutput" class="u-full-width"></textarea>
                 <ul id="txHistory"></ul>
