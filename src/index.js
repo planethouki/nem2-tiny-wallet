@@ -124,8 +124,10 @@ const aiForm = document.getElementById('account-info')
 const txForm = document.getElementById('transaction')
 txForm.addEventListener('submit', (e) => {
     e.preventDefault()
+    const messageElm = new MessageElm('tx-message')
     const isValid = txForm.checkValidity() && acForm.checkValidity()
     if (isValid) {
+        messageElm.startLoading()
         const privateKey = acForm["privKey"].value.toUpperCase()
         const endpoint = acForm["endpoint"].value
         const recipient = txForm["recipient"].value.toUpperCase().replace(/-/g, '')
@@ -141,20 +143,22 @@ txForm.addEventListener('submit', (e) => {
             mosaicId,
             amount,
             function(error, signedTxPayload, signedTxHash) {
+                if (error) {
+                    messageElm.setError(error)
+                    return;
+                }
                 document.getElementById('tx-hash').innerText = signedTxHash
                 document.getElementById('tx-payload').innerText = signedTxPayload
                 if (isDryRun) {
-                    if (error) {
-                        document.getElementById("txOutput").innerText = JSON.stringify(error);
-                        return;
-                    }
+                    messageElm.finishLoading()
                     document.getElementById("txOutput").innerText = ""
                     return
                 }
                 sendTransferTransaction(signedTxPayload, signedTxHash, endpoint,
                     function (error, status, hash) {
+                        messageElm.finishLoading()
                         if (error) {
-                            document.getElementById("txOutput").innerText = JSON.stringify(error);
+                            messageElm.setError(error)
                             return;
                         }
                         const a = document.createElement("a");

@@ -5,7 +5,7 @@ class MessageElm {
     }
 
     startLoading() {
-        this.elm.innerText = 'getting...'
+        this.elm.innerText = 'wait...'
     }
 
     finishLoading() {
