@@ -33,9 +33,13 @@ describe('parseNodeVersion', () => {
     beforeAll(() => {
         parseNodeVersion = independence.parseNodeVersion;
     });
-    test('normal', () => {
+    test('normal-1.0.1.0', () => {
         const a = parseNodeVersion(16777472);
         expect(a).toBe('1.0.1.0')
+    });
+    test('normal-0.10.0.7', () => {
+        const a = parseNodeVersion(655367);
+        expect(a).toBe('0.10.0.7')
     });
     test('string input', () => {
         const a = parseNodeVersion('16777472');
