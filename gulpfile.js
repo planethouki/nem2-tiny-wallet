@@ -45,20 +45,5 @@ function serve() {
     }).listen();
 }
 
-function docsJs() {
-    return src('./dist/index.js')
-        .pipe(dest('docs/'));
-}
-function docsHtml() {
-    return src('./dist/index.html')
-        .pipe(dest('docs/'));
-}
-function docsCss() {
-    return src('./dist/*.css')
-        .pipe(dest('docs/'));
-}
-
-
 exports.build = series(checkDistFolder, parallel(javascript, html, css));
 exports.serve = serve;
-exports.docs = parallel(docsJs, docsHtml, docsCss);
