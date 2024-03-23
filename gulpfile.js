@@ -1,8 +1,18 @@
-const { parallel, src, dest } = require('gulp');
+const { parallel, series, src, dest } = require('gulp');
 const superstatic = require('superstatic');
 const browserify = require('browserify');
 const fs = require('fs');
 const ejs = require('ejs');
+
+function checkDistFolder(cb) {
+    fs.access('dist', fs.constants.F_OK, (err) => {
+        if (err) {
+            // distフォルダが存在しない場合は作成
+            fs.mkdirSync('dist');
+        }
+        cb();
+    });
+}
 
 function javascript(cb) {
     const b = browserify({
@@ -49,6 +59,6 @@ function docsCss() {
 }
 
 
-exports.build = parallel(javascript, html, css);
+exports.build = series(checkDistFolder, parallel(javascript, html, css));
 exports.serve = serve;
 exports.docs = parallel(docsJs, docsHtml, docsCss);
