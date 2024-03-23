@@ -7,6 +7,6 @@ describe('MessageElm', () => {
         document.body.appendChild(elm)
         const msgElm = new MessageElm('elm')
         msgElm.startLoading()
-        expect(elm.innerText).toBe('getting...')
+        expect(elm.innerText).toBe('wait...')
     });
 });
