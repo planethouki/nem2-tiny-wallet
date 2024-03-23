@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 const MessageElm = require('../../src/utils/messageElm')
 
 describe('MessageElm', () => {
